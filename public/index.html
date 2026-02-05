@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alalala Stats - Partidas</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Dashboard de partidas</p>
+          <h1>Controle completo de jogos europeus</h1>
+          <p class="subtitle">
+            Selecione o seu time europeu favorito e mantenha as estatísticas da
+            temporada sempre atualizadas.
+          </p>
+        </div>
+        <div class="team-selector">
+          <label for="team-select">Selecione um time europeu</label>
+          <input
+            id="team-select"
+            name="team-select"
+            list="european-teams"
+            placeholder="Ex: Real Madrid, PSG, Bayern..."
+            autocomplete="off"
+          />
+          <datalist id="european-teams"></datalist>
+          <p class="helper">Use a lista ou comece a digitar para filtrar.</p>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2>Cadastro / edição de partidas</h2>
+              <p>Registre placar, posse de bola, xG e outras métricas.</p>
+            </div>
+            <button id="reset-form" class="ghost-button" type="button">
+              Limpar formulário
+            </button>
+          </div>
+
+          <form id="match-form" class="match-form">
+            <input type="hidden" id="match-id" />
+            <div class="form-grid">
+              <label>
+                Time
+                <input id="match-team" name="team" required />
+              </label>
+              <label>
+                Adversário
+                <input id="match-opponent" name="opponent" required />
+              </label>
+              <label>
+                Data da partida
+                <input id="match-date" name="date" type="date" />
+              </label>
+              <label>
+                Placar (time)
+                <input id="score-home" name="scoreHome" type="number" min="0" />
+              </label>
+              <label>
+                Placar (adversário)
+                <input id="score-away" name="scoreAway" type="number" min="0" />
+              </label>
+              <label>
+                Posse de bola (%)
+                <input
+                  id="possession"
+                  name="possession"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+              </label>
+              <label>
+                xG
+                <input id="xg" name="xg" type="number" min="0" step="0.01" />
+              </label>
+              <label>
+                Finalizações
+                <input id="shots" name="shots" type="number" min="0" />
+              </label>
+              <label>
+                Finalizações no alvo
+                <input
+                  id="shots-on-target"
+                  name="shotsOnTarget"
+                  type="number"
+                  min="0"
+                />
+              </label>
+              <label>
+                Escanteios
+                <input id="corners" name="corners" type="number" min="0" />
+              </label>
+              <label>
+                Faltas
+                <input id="fouls" name="fouls" type="number" min="0" />
+              </label>
+              <label>
+                Cartões amarelos
+                <input
+                  id="yellow-cards"
+                  name="yellowCards"
+                  type="number"
+                  min="0"
+                />
+              </label>
+              <label>
+                Cartões vermelhos
+                <input
+                  id="red-cards"
+                  name="redCards"
+                  type="number"
+                  min="0"
+                />
+              </label>
+              <label>
+                Passes
+                <input id="passes" name="passes" type="number" min="0" />
+              </label>
+              <label>
+                Precisão de passes (%)
+                <input
+                  id="pass-accuracy"
+                  name="passAccuracy"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">
+                Salvar partida
+              </button>
+              <span id="form-feedback" class="form-feedback" role="status"></span>
+            </div>
+          </form>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2>Partidas cadastradas</h2>
+              <p>Edite ou exclua registros existentes.</p>
+            </div>
+          </div>
+          <div id="matches-list" class="matches-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
