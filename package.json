@@ -1,0 +1,9 @@
+{
+  "name": "projeto-alalala",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Cadastro de partidas e estatísticas",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
