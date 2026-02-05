@@ -5,6 +5,13 @@ const matchIdField = document.querySelector("#match-id");
 const resetButton = document.querySelector("#reset-form");
 const matchesList = document.querySelector("#matches-list");
 const formFeedback = document.querySelector("#form-feedback");
+const form = document.getElementById("trophy-form");
+const shelves = document.getElementById("shelves");
+const imageSelect = document.getElementById("image-select");
+const shelfTemplate = document.getElementById("shelf-template");
+
+let trophiesCache = [];
+let imagesCache = new Set();
 
 const teams = [
   "Arsenal",
@@ -283,6 +290,142 @@ matchesList.addEventListener("click", async (event) => {
 teamSelect.addEventListener("change", () => {
   matchForm.team.value = teamSelect.value;
 });
+
+async function fetchTrophies() {
+  const response = await fetch("/api/trophies");
+  if (!response.ok) {
+    throw new Error("Falha ao carregar troféus.");
+  }
+  return response.json();
+}
+
+function updateImageOptions() {
+  imageSelect.innerHTML = "";
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Selecione uma imagem";
+  imageSelect.appendChild(placeholder);
+
+  [...imagesCache].forEach((url) => {
+    const option = document.createElement("option");
+    option.value = url;
+    option.textContent = url.includes("uploads") ? "Imagem enviada" : url;
+    imageSelect.appendChild(option);
+  });
+}
+
+function renderShelves(trophies) {
+  shelves.innerHTML = "";
+
+  trophies.forEach((trophy) => {
+    const shelf = shelfTemplate.content.cloneNode(true);
+    shelf.querySelector(".shelf-title").textContent = trophy.competition;
+    shelf.querySelector(".shelf-count").textContent = `${trophy.count}x`;
+    const container = shelf.querySelector(".trophies");
+
+    for (let i = 0; i < trophy.count; i += 1) {
+      const item = document.createElement("div");
+      item.className = "trophy";
+
+      const img = document.createElement("img");
+      img.src = trophy.imageUrl;
+      img.alt = `${trophy.competition} ${i + 1}`;
+
+      const label = document.createElement("span");
+      label.textContent = trophy.competition;
+
+      item.appendChild(img);
+      item.appendChild(label);
+      container.appendChild(item);
+    }
+
+    shelves.appendChild(shelf);
+  });
+}
+
+async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append("image", file);
+  const response = await fetch("/api/uploads", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Falha ao enviar imagem.");
+  }
+
+  const data = await response.json();
+  return data.imageUrl;
+}
+
+async function saveTrophy(payload) {
+  const response = await fetch("/api/trophies", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Falha ao salvar troféu.");
+  }
+
+  return response.json();
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const formData = new FormData(form);
+  const competition = formData.get("competition").trim();
+  const count = Number(formData.get("count"));
+  const file = formData.get("image");
+  const selectedImage = formData.get("imageSelect");
+
+  if (!competition || !count) {
+    return;
+  }
+
+  let imageUrl = selectedImage;
+  if (file && file.size > 0) {
+    imageUrl = await uploadImage(file);
+  }
+
+  if (!imageUrl) {
+    alert("Selecione ou envie uma imagem.");
+    return;
+  }
+
+  const saved = await saveTrophy({ competition, count, imageUrl });
+
+  const existingIndex = trophiesCache.findIndex(
+    (item) => item.competition === saved.competition
+  );
+
+  if (existingIndex >= 0) {
+    trophiesCache[existingIndex] = saved;
+  } else {
+    trophiesCache.push(saved);
+  }
+
+  imagesCache.add(saved.imageUrl);
+  updateImageOptions();
+  renderShelves(trophiesCache);
+  form.reset();
+});
+
+(async () => {
+  try {
+    trophiesCache = await fetchTrophies();
+    imagesCache = new Set(trophiesCache.map((item) => item.imageUrl));
+    updateImageOptions();
+    renderShelves(trophiesCache);
+  } catch (error) {
+    shelves.innerHTML = `<p>Não foi possível carregar os troféus.</p>`;
+  }
+})();
 
 populateTeams();
 renderMatches();
