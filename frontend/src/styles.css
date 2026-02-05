@@ -1,0 +1,58 @@
+:root {
+  font-family: "Inter", system-ui, sans-serif;
+  color: #1f2937;
+  background-color: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  display: grid;
+  gap: 32px;
+}
+
+.app__header {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 16px;
+}
+
+.app__badge {
+  width: fit-content;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: 0.85rem;
+}
+
+.app__section {
+  background: white;
+  border-radius: 20px;
+  padding: 24px 32px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+  display: grid;
+  gap: 12px;
+}
+
+.app__section ul {
+  margin-left: 18px;
+  display: grid;
+  gap: 6px;
+}
